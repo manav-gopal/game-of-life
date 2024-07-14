@@ -7,7 +7,7 @@ const getNextAliveCells = (aliveCells: Record<string, true>) => {
     const neighbourCellKey = `${x + subX}-${y + subY}`;
 
     //Check if its out of boundry
-    if (x < 0 || y < 0 || x > 30 || y > 30) {
+    if (x < 0 || y < 0 || x > 29 || y > 29) {
       return;
     }
 
