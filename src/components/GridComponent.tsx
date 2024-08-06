@@ -39,7 +39,7 @@ const GridComponent = () => {
     const cells = [];
     for (let i = 0; i < gridSize; i++) {
       for (let j = 0; j < gridSize; j++) {
-        const cellKey: string = `${i}-${j}`;
+        const cellKey: string = `${i}:${j}`;
         cells.push(
           <div
             key={cellKey}

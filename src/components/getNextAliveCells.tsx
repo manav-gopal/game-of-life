@@ -3,8 +3,8 @@ const getNextAliveCells = (aliveCells: Record<string, true>) => {
   let checkedCells = new Map(); // Tracks cells that have already been processed
 
   function mapSet(x: number, y: number, subX: number, subY: number) {
-    const currentCellKey = `${x}-${y}`;
-    const neighbourCellKey = `${x + subX}-${y + subY}`;
+    const currentCellKey = `${x}:${y}`;
+    const neighbourCellKey = `${x + subX}:${y + subY}`;
 
     //Check if its out of boundry
     if (x < 0 || y < 0 || x > 29 || y > 29) {
@@ -28,7 +28,7 @@ const getNextAliveCells = (aliveCells: Record<string, true>) => {
 
   // Iterate over each alive cell
   Object.keys(aliveCells).forEach((key) => {
-    let [x, y] = key.split("-").map(Number); // Split the key to get x and y coordinates
+    let [x, y] = key.split(":").map(Number); // Split the key to get x and y coordinates
 
     // Check all 8 neighbours of the current cell (starting from top-left, going clockwise)
     mapSet(x, y, -1, -1); // Top-left neighbour
@@ -40,7 +40,7 @@ const getNextAliveCells = (aliveCells: Record<string, true>) => {
     mapSet(x, y, 1, 0); // Bottom neighbour
     mapSet(x, y, 1, 1); // Bottom-right neighbour
 
-    checkedCells.set(`${x}-${y}`, true); // Mark the current cell as checked
+    checkedCells.set(`${x}:${y}`, true); // Mark the current cell as checked
   });
 
   // Here we Apply the rules of game of life
