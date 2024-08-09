@@ -27,18 +27,28 @@ $yellow: #fffb00;
     }
   }
 
-  .grid-container {
-    display: grid;
-    grid-template-columns: repeat(30, 20px);
-    grid-template-rows: repeat(30, 20px);
-    min-width: 600px;
+  .grid-wrapper {
     width: 600px;
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .grid-container {
+    display: block; 
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    background-color: #515151;
 
     .grid-item {
-      width: 20px;
-      height: 20px;
+      width: 19px; // 20px - 1px for border
+      height: 19px; // 20px - 1px for border
       border: 1px solid rgb(123, 123, 123);
-      cursor: pointer;
+      position: absolute;
+      box-sizing: border-box;
     }
 
     .alive {

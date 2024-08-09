@@ -3,9 +3,10 @@ import "./styles/GridComponents.scss";
 import getNextAliveCells from "./getNextAliveCells"; // Import the algo function
 import { isEqual } from "lodash-es";
 import { initialActiveCells, toggleCellState } from "../utils/utils";
+import InfinitePannableGrid from "./InfinitePannableGrid";
 
 const GridComponent = () => {
-  const gridSize = 30;
+  const gridSize = 20;
 
   const InitialAliveCells = initialActiveCells();
   const [aliveCells, setAliveCells] =
@@ -28,32 +29,12 @@ const GridComponent = () => {
     return () => clearTimeout(timeout);
   }, [aliveCells, start]);
 
-  // For onClick Event on the grid divs 
+  // For onClick Event on the grid divs
   const toggleCell = (x: number, y: number) => {
-    const updatedActiveCells = toggleCellState(aliveCells, x, y, gridSize);
+    const updatedActiveCells = toggleCellState(aliveCells, x, y);
     setAliveCells(updatedActiveCells);
   };
 
-  //  For generating the Grid.....
-  const generateCells = () => {
-    const cells = [];
-    for (let i = 0; i < gridSize; i++) {
-      for (let j = 0; j < gridSize; j++) {
-        const cellKey: string = `${i}:${j}`;
-        cells.push(
-          <div
-            key={cellKey}
-            id={cellKey}
-            className={`grid-item ${aliveCells[cellKey] ? "alive" : "died"}`}
-            onClick={() => toggleCell(i, j)}
-          ></div>
-        );
-      }
-    }
-    return cells;
-  };
-
-  const cells = generateCells();
   const handleReset = () => {
     setAliveCells(InitialAliveCells);
     setStart(false);
@@ -69,9 +50,20 @@ const GridComponent = () => {
   return (
     <div className="main-container">
       <div className="description">
-        <h1>Conway's <br/><span className="highlight">Game Of Life</span></h1>
+        <h1>
+          Conway's <br />
+          <span className="highlight">Game Of Life</span>
+        </h1>
       </div>
-      <div className="grid-container">{cells}</div>
+      <div className="grid-wrapper">
+        <InfinitePannableGrid
+          gridSize={gridSize}
+          aliveCells={aliveCells}
+          onCellToggle={toggleCell}
+          containerWidth={600}
+          containerHeight={600}
+        />
+      </div>
       <div className="action-container">
         <button className="start" onClick={handleStartStop}>
           {!start ? "Start" : "Stop"}
