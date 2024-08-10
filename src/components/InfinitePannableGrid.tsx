@@ -42,7 +42,7 @@ const InfinitePannableGrid: React.FC<InfinitePannableGridProps> = ({
     const endY = Math.floor((height - translatePos.y) / gridSize);
 
     for (let x = startX; x <= endX; x++) {
-          for (let y = startY; y <= endY; y++) {
+      for (let y = startY; y <= endY; y++) {
         const cellKey = `${x}:${y}`;
         cells.push({
           x,
@@ -51,18 +51,26 @@ const InfinitePannableGrid: React.FC<InfinitePannableGridProps> = ({
         });
       }
     }
-    // console.log(cells.length);
     return cells;
   };
 
-  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+  // Updated handleMouseDown to handle both mouse and touch events
+  const handleMouseDown = (
+    event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
+  ) => {
     setIsMouseDown(true);
     setIsPanning(true);
-    setStartDragOffset({
-      x: event.clientX - translatePos.x,
-      y: event.clientY - translatePos.y,
-    });
-    setInitialClickPos({ x: event.clientX, y: event.clientY });
+
+    if ("clientX" in event) { // Mouse Events
+      setStartDragOffset({
+        x: event.clientX - translatePos.x,
+        y: event.clientY - translatePos.y,
+      });
+      setInitialClickPos({ x: event.clientX, y: event.clientY });
+    }else{ // Touch Events
+      const touch = event.touches[0];
+      setInitialClickPos({ x: touch.screenX, y: touch.screenY });
+    }
   };
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -95,11 +103,33 @@ const InfinitePannableGrid: React.FC<InfinitePannableGridProps> = ({
     }
   };
 
+   // handleTouchMove to handle touch-based panning
+   const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (isPanning && event.touches.length === 1) {
+      const touch = event.touches[0];
+      setTranslatePos((prevPos) => ({
+        x: prevPos.x + touch.screenX - initialClickPos.x,
+        y: prevPos.y + touch.screenY - initialClickPos.y,
+      }));
+      setInitialClickPos({ x: touch.screenX, y: touch.screenY });
+    }
+  };
+
   const handleMouseLeave = () => {
     if (isMouseDown) {
       setIsMouseDown(false);
       setIsPanning(false);
     }
+  };
+
+  // wheel event handler for two-finger scrolling
+  const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setTranslatePos((prevPos) => ({
+      x: prevPos.x - event.deltaX, // Scroll horizontally
+      y: prevPos.y - event.deltaY, // Scroll vertically
+    }));
   };
 
   const visibleCells = getVisibleCells();
@@ -115,6 +145,9 @@ const InfinitePannableGrid: React.FC<InfinitePannableGridProps> = ({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleMouseDown}
+      onTouchMove={handleTouchMove} 
+      onWheel={handleWheel}
     >
       {visibleCells.map(({ x, y, alive }) => (
         <div
