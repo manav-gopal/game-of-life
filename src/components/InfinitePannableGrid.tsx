@@ -75,6 +75,7 @@ const InfinitePannableGrid: React.FC<InfinitePannableGridProps> = ({
   const handleMouseDown = (
     event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
   ) => {
+    event.stopPropagation();
     setIsMouseDown(true);
     setIsPanning(true);
 
@@ -99,6 +100,7 @@ const InfinitePannableGrid: React.FC<InfinitePannableGridProps> = ({
   };
 
   const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
     if (isMouseDown) {
       setIsMouseDown(false);
       setIsPanning(false);
@@ -122,6 +124,7 @@ const InfinitePannableGrid: React.FC<InfinitePannableGridProps> = ({
 
    // handleTouchMove to handle touch-based panning
    const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    event.stopPropagation();
     if (isPanning && event.touches.length === 1) {
       const touch = event.touches[0];
       setTranslatePos((prevPos) => ({
