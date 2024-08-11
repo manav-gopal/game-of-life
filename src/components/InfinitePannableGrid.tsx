@@ -31,6 +31,23 @@ const InfinitePannableGrid: React.FC<InfinitePannableGridProps> = ({
     }
   }, [gridRef]);
 
+  useEffect(() => {
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      setTranslatePos((prevPos) => ({
+        x: prevPos.x - event.deltaX, // Adjust horizontally
+        y: prevPos.y - event.deltaY, // Adjust vertically
+      }));
+    };
+
+    const currentGrid = gridRef.current;
+    currentGrid?.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      currentGrid?.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
+
   const getVisibleCells = () => {
     const cells = [];
     const width = gridWidth || 0;
@@ -122,16 +139,6 @@ const InfinitePannableGrid: React.FC<InfinitePannableGridProps> = ({
     }
   };
 
-  // wheel event handler for two-finger scrolling
-  const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setTranslatePos((prevPos) => ({
-      x: prevPos.x - event.deltaX, // Scroll horizontally
-      y: prevPos.y - event.deltaY, // Scroll vertically
-    }));
-  };
-
   const visibleCells = getVisibleCells();
 
   return (
@@ -147,7 +154,6 @@ const InfinitePannableGrid: React.FC<InfinitePannableGridProps> = ({
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleMouseDown}
       onTouchMove={handleTouchMove} 
-      onWheel={handleWheel}
     >
       {visibleCells.map(({ x, y, alive }) => (
         <div
